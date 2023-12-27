@@ -1,0 +1,33 @@
+version: 0.2
+
+env:
+  variables:
+    IMAGE_REPO_NAME: "Employee_info"
+    CODEBUILD_RESOLVED_SOURCE_VERSION: "v1"
+    CONTAINER_NAME: "ThakurSahab"
+
+phases:
+  install:
+    runtime-versions:
+      docker: 19
+
+  pre_build:
+    commands:
+      - echo Retrieving Docker Hub credentials from SSM Parameter Store...
+      - export DOCKER_USERNAME=$(aws ssm get-parameter --name "/docker_url/user_name" --with-decryption --query "Parameter.Value" --output text)
+      - export DOCKER_PASSWORD=$(aws ssm get-parameter --name "/docker_url/password" --with-decryption --query "Parameter.Value" --output text)
+      - echo Logging in to Docker Hub...
+      - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build -t $DOCKER_USERNAME/$IMAGE_REPO_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - docker push $DOCKER_USERNAME/$IMAGE_REPO_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION
+
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Writing image definitions file...
+      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $DOCKER_USERNAME/$IMAGE_REPO_NAME:$CODEBUILD_RESOLVED_SOURCE_VERSION > imagedefinitions.json
