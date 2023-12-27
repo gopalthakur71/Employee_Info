@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-    IMAGE_REPO_NAME: "Employee_info"
+    IMAGE_REPO_NAME: "employee_info"
     CODEBUILD_RESOLVED_SOURCE_VERSION: "v1"
     CONTAINER_NAME: "employee-app"
 
