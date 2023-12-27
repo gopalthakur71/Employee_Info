@@ -4,12 +4,15 @@ env:
   variables:
     IMAGE_REPO_NAME: "Employee_info"
     CODEBUILD_RESOLVED_SOURCE_VERSION: "v1"
-    CONTAINER_NAME: "ThakurSahab"
+    CONTAINER_NAME: "employee-app"
 
 phases:
   install:
     runtime-versions:
-      python: 3.11
+      python: 3.8
+    commands:
+      - echo Installing dependencies...
+      - pip install -r requirements.txt
 
   pre_build:
     commands:
