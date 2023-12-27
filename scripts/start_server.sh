@@ -11,4 +11,4 @@ IMAGE="$IMAGE_NAME:$IMAGE_TAG"
 docker pull "$IMAGE"
 
 # Start the container
-docker run -p 80:80 "$IMAGE"
+docker run -d -p 80:80 "$IMAGE"
